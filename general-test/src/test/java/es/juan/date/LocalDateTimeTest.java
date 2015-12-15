@@ -1,6 +1,5 @@
 package es.juan.date;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 

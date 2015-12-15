@@ -1,14 +1,19 @@
 package es.juan.java8.stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
-
+import static java.util.stream.Collectors.*;
 
 public class StreamTest {
 
@@ -73,4 +78,46 @@ public class StreamTest {
 		assertThat(fullArray).hasSize(10);
 		assertThat(fullArray).containsExactly(1d,2d,3d,4d,5d,6d,7d,8d,9d,10d);
 	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testSplitStream() {
+		DoubleStream stream = Arrays.stream(new double[]{1d,2d,3d,4d,5d,6d});
+		
+		assertThat(stream.limit(3).toArray()).containsExactly(1d,2d,3d);
+		assertThat(stream.skip(3).toArray()).containsExactly(4d,5d,6d);//Throws IllegalStateException
+	}
+	
+	@Test
+	public void testGenerateNaturalArray() {
+		int[] naturalArray = IntStream.range(1, 11).toArray();
+		
+		assertThat(naturalArray).hasSize(10);
+		assertThat(naturalArray).containsExactly(1,2,3,4,5,6,7,8,9,10);
+	}
+	
+	@Test
+	public void arrayToNumber() {
+		int[] array = new int[]{1,2,3,4,5,6};
+		StringBuilder sb = new StringBuilder();
+		
+		Arrays.stream(array).forEach(element -> sb.append(element));
+		
+		assertThat(sb.toString()).isEqualTo("123456");
+	}
+	
+	@Test
+	public void compliationFailOnMaven() {
+		
+		Optional<List<String>> list = getDummyList();
+		
+		List<Integer> hascodes = list.orElse(Collections.EMPTY_LIST).stream().map(value -> value.hashCode()).collect(toList());
+		
+		assertThat(hascodes).isNotNull();
+	}
+
+	private Optional<List<String>> getDummyList() {
+		
+		return Optional.ofNullable(new ArrayList<String>(0));
+	}
+	
 }
